@@ -53,6 +53,8 @@ dependencies:
   sign_in_with_apple: ^3.3.0
   flutter_typeahead: ^3.2.5
   flutter_gifimage: ^1.0.1
+  readmore: ^2.1.0
+
 
 
 dev_dependencies:

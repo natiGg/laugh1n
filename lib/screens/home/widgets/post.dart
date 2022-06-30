@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:laugh1/screens/constants/constants.dart';
 import 'package:laugh1/screens/home/widgets/reaction.dart';
 import 'package:laugh1/screens/home/widgets/userbar.dart';
+import 'package:readmore/readmore.dart';
 
 import 'content.dart';
 import 'hashtags.dart';
@@ -68,10 +69,24 @@ class _PostState extends State<Post> {
                     image: widget.image,
                   ),
                   SizedBox(height: 15.0),
-                  Text(
+                  // ReadMoreText(
+                  //   widget.caption,
+                  //   style: GoogleFonts.montserrat(
+                  //       fontSize: 12.0, color: Colors.grey),
+                  // ),
+                  ReadMoreText(
                     widget.caption,
+                    trimLines: 2,
+                    colorClickableText: Colors.pink,
+                    trimMode: TrimMode.Line,
+                    trimCollapsedText: 'Show more',
                     style: GoogleFonts.montserrat(
-                        fontSize: 12.0, color: Colors.grey),
+                        fontSize: 13.0, color: Colors.grey),
+                    // trimExpandedText: 'Show less',
+                    moreStyle: GoogleFonts.montserrat(
+                        fontSize: 13.0,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 10.0),
                   Content(image: widget.image),
