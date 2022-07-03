@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:laugh1/screens/constants/constants.dart';
 
 class Reaction extends StatelessWidget {
   const Reaction({Key? key}) : super(key: key);
@@ -121,7 +122,8 @@ class _LevelState extends State<Level>
         gradient: LinearGradient(
           colors: [
             Colors.amber,
-            const Color(0xFFF26E01),
+            // primaryColor
+            const Color(0xFFadd8e6),
           ],
           begin: const FractionalOffset(0.0, 0.0),
           end: const FractionalOffset(3.0, 0.0),

@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'dart:math' as math;
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:flutter_gifimage/flutter_gifimage.dart';
 import 'package:flutter/material.dart'
@@ -59,10 +60,14 @@ class GifHeader1State extends RefreshIndicatorState<GifHeader1>
   @override
   Widget buildContent(BuildContext context, RefreshStatus mode) {
     // TODO: implement buildContent
-    return Image(
-      image: AssetImage("assets/images/laughing.gif"),
-      height: 80.0,
-      width: 537.0,
+    return Transform(
+      alignment: Alignment.center,
+      transform: Matrix4.rotationY(_gifController.value),
+      child: Image(
+        image: AssetImage("assets/images/laughing.gif"),
+        height: 80.0,
+        width: 537.0,
+      ),
     );
   }
 

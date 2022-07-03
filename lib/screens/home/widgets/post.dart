@@ -81,7 +81,7 @@ class _PostState extends State<Post> {
                     trimMode: TrimMode.Line,
                     trimCollapsedText: 'Show more',
                     style: GoogleFonts.montserrat(
-                        fontSize: 13.0, color: Colors.grey),
+                        fontSize: 15.0, color: Colors.grey),
                     // trimExpandedText: 'Show less',
                     moreStyle: GoogleFonts.montserrat(
                         fontSize: 13.0,

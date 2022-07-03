@@ -52,8 +52,12 @@ dependencies:
   google_sign_in: ^5.3.0
   sign_in_with_apple: ^3.3.0
   flutter_typeahead: ^3.2.5
+  font_awesome_flutter: ^10.1.0
   flutter_gifimage: ^1.0.1
   readmore: ^2.1.0
+  video_player: ^2.2.18
+  shimmer: ^2.0.0
+
 
 
 
