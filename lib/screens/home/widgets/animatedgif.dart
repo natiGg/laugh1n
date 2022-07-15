@@ -64,9 +64,9 @@ class GifHeader1State extends RefreshIndicatorState<GifHeader1>
       alignment: Alignment.center,
       transform: Matrix4.rotationY(_gifController.value),
       child: Image(
-        image: AssetImage("assets/images/laughing.gif"),
-        height: 80.0,
-        width: 537.0,
+        image: AssetImage("assets/images/laughing2.gif"),
+        height: 50.0,
+        width: 50.0,
       ),
     );
   }

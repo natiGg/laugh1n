@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:laugh1/screens/home/controller/initialcontroller.dart';
 import 'package:laugh1/screens/home/widgets/avatar.dart';
 
-class UserBar extends StatelessWidget {
+class UserBar extends GetView<InitialController> {
   const UserBar({Key? key, required this.image}) : super(key: key);
   final String image;
   @override
@@ -10,16 +12,6 @@ class UserBar extends StatelessWidget {
     return Row(
       children: [
         Avatar(image: image),
-        // Container(
-        //   height: 50.0,
-        //   width: 50.0,
-        //   decoration: BoxDecoration(
-        //       borderRadius: BorderRadius.circular(25.0),
-        //       image: DecorationImage(
-        //           image: NetworkImage(
-        //               "https://raw.githubusercontent.com/rajayogan/flutter-fashionheroes/master/assets/modelgrid1.jpeg"),
-        //           fit: BoxFit.cover)),
-        // ),
         SizedBox(
           width: 10.0,
         ),
@@ -31,21 +23,12 @@ class UserBar extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "Daisy",
-                    style: GoogleFonts.poppins(
-                        fontSize: 15.0,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black),
-                  ),
+                  Text("Daisy", style: Theme.of(context).textTheme.bodyText1),
                   SizedBox(
                     height: 5,
                   ),
-                  Text(
-                    "34 mins ago",
-                    style:
-                        GoogleFonts.poppins(fontSize: 12.0, color: Colors.grey),
-                  )
+                  Text("34 mins ago",
+                      style: Theme.of(context).textTheme.bodyText2)
                 ],
               ),
               Icon(

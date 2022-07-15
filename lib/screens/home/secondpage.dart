@@ -58,7 +58,7 @@ class _SecondPageState extends State<SecondPage> {
                                 image: DecorationImage(
                                     image: NetworkImage(
                                         "https://raw.githubusercontent.com/rajayogan/flutter-fashionheroes/master/assets/dress.jpg"),
-                                    fit: BoxFit.cover)),
+                                    fit: BoxFit.contain)),
                           ),
                         ),
                         Column(

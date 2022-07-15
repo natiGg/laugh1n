@@ -25,7 +25,7 @@ class Content extends StatelessWidget {
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(5.0),
                       image: DecorationImage(
-                          image: NetworkImage(image), fit: BoxFit.cover)),
+                          image: NetworkImage(image), fit: BoxFit.contain)),
                 )),
           ),
         ),

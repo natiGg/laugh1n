@@ -4,15 +4,21 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:laugh1/screens/constants/constants.dart';
+import 'package:laugh1/screens/home/controller/initialcontroller.dart';
 import 'package:laugh1/screens/home/secondpage.dart';
 import 'package:laugh1/screens/home/widgets/animatedgif.dart';
+import 'package:laugh1/screens/home/widgets/avatar.dart';
 import 'package:laugh1/screens/home/widgets/content.dart';
 import 'package:laugh1/screens/home/widgets/hashtags.dart';
+import 'package:laugh1/screens/home/widgets/loading.dart';
 import 'package:laugh1/screens/home/widgets/post.dart';
 import 'package:laugh1/screens/home/widgets/reaction.dart';
 import 'package:laugh1/screens/home/widgets/shimmer.dart';
+import 'package:laugh1/screens/home/widgets/shimmer_post.dart';
 import 'package:laugh1/screens/home/widgets/userbar.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
+
+import 'controller/maincontroller.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -22,18 +28,33 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
+  final signUpcontroller = Get.find<MainController>();
+  final initController = Get.find<InitialController>();
   late TabController controller;
+  List isSelected = [true, false, false, false];
+  bool tapped = false;
+  late Theme theme;
   List<String> items = ["1", "2", "3", "4", "5", "6", "7", "8"];
   RefreshController _refreshController =
       RefreshController(initialRefresh: false);
   bool _show = false;
+  bool _isRefreshed = false;
+  @override
+  bool get wantKeepAlive => true;
 
   void _onRefresh() async {
+    setState(() {
+      _isRefreshed = !_isRefreshed;
+    });
     // monitor network fetch
     await Future.delayed(Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
+
+    setState(() {
+      _isRefreshed = !_isRefreshed;
+    });
   }
 
   void _onLoading() async {
@@ -70,20 +91,25 @@ class _HomePageState extends State<HomePage>
           padding: const EdgeInsets.all(2.0),
           child: Row(
             children: [
-              Text(
-                "Laugh1",
-                style: GoogleFonts.poppins(
-                    color: Colors.black,
-                    fontSize: 22.0,
-                    fontWeight: FontWeight.bold),
-              ),
+              Text("Laugh1", style: Theme.of(context).textTheme.headline6)
             ],
           ),
         ),
         actions: [
           IconButton(
+            icon: Icon(initController.isLightTheme.value
+                ? Icons.dark_mode
+                : Icons.light_mode_sharp),
+            color:
+                initController.isLightTheme.value ? primaryColor : Colors.white,
+            onPressed: () {
+              initController.toggleTheme();
+            },
+          ),
+          IconButton(
             icon: Icon(Icons.chat),
-            color: primaryColor,
+            color:
+                initController.isLightTheme.value ? primaryColor : Colors.white,
             onPressed: () {},
           )
         ],
@@ -98,62 +124,74 @@ class _HomePageState extends State<HomePage>
         child: ListView(
           padding: EdgeInsets.only(top: 15.0, bottom: 15.0),
           children: [
-            Post(
-              image:
-                  "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
-              caption:
-                  "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Pro",
-            ),
-            Post(
-              image:
-                  "https://i.pinimg.com/750x/dc/4b/10/dc4b101f7c86f29ed800bc44919028ae.jpg",
-              caption:
-                  "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Amateur",
-            ),
-            Post(
-              image:
-                  "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
-              caption:
-                  "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Comedian",
-            ),
-            Post(
-              image:
-                  "https://dontgetserious.com/wp-content/uploads/2021/07/Awkward-Meme-768x646.jpeg",
-              caption:
-                  "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Beginner",
-            ),
-            Post(
-              image:
-                  "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
-              caption:
-                  "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Beginner",
-            ),
+            !_isRefreshed
+                ? Post(
+                    image:
+                        "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
+                    caption:
+                        "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
+                    level: "Pro",
+                  )
+                : ShimerPost(),
+            !_isRefreshed
+                ? Post(
+                    image:
+                        "https://i.pinimg.com/750x/dc/4b/10/dc4b101f7c86f29ed800bc44919028ae.jpg",
+                    caption:
+                        "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
+                    level: "Amateur",
+                  )
+                : ShimerPost(),
+            !_isRefreshed
+                ? Post(
+                    image:
+                        "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
+                    caption:
+                        "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
+                    level: "Comedian",
+                  )
+                : ShimerPost(),
+            !_isRefreshed
+                ? Post(
+                    image:
+                        "https://dontgetserious.com/wp-content/uploads/2021/07/Awkward-Meme-768x646.jpeg",
+                    caption:
+                        "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
+                    level: "Beginner",
+                  )
+                : ShimerPost(),
+            !_isRefreshed
+                ? Post(
+                    image:
+                        "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
+                    caption:
+                        "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
+                    level: "Beginner",
+                  )
+                : ShimerPost(),
             Post(
               image:
                   "https://raw.githubusercontent.com/rajayogan/flutter-fashionheroes/master/assets/modelgrid1.jpeg",
               caption:
                   "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Pro/Roaster",
+              level: "Pro/Roaster",
             ),
             Post(
               image:
                   "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
               caption:
                   "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Beginner",
+              level: "Beginner",
             ),
-            Post(
-              image:
-                  "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
-              caption:
-                  "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
-              level: "#Pro",
-            ),
+            !_isRefreshed
+                ? Post(
+                    image:
+                        "https://www.boredpanda.com/blog/wp-content/uploads/2019/04/funny-boss-memes-fb29.png",
+                    caption:
+                        "'This official website features a ribbed knit zipper jacket that is modern and stylish. It looks very temparament and is recommended to friends',",
+                    level: "Pro",
+                  )
+                : ShimerPost(),
           ],
         ),
       ),
@@ -185,15 +223,13 @@ class _HomePageState extends State<HomePage>
                 ])),
       ),
       bottomNavigationBar: Material(
-        color: Colors.white,
+        color: initController.isDarkMode.value ? Colors.black : Colors.white,
         child: TabBar(
           controller: controller,
           indicatorColor: Colors.transparent,
           tabs: [
             InkWell(
-              onTap: () {
-                Get.to(MyApp());
-              },
+              onTap: () {},
               child: Tab(
                 icon: Icon(
                   Icons.home,
@@ -229,131 +265,47 @@ class _HomePageState extends State<HomePage>
     );
   }
 
-  _showModalBottomSheet() {
-    showModalBottomSheet(
-      context: context,
-      builder: (context) {
-        return Container(
-          height: 200,
-          width: double.infinity,
-          color: Colors.grey.shade200,
-          alignment: Alignment.center,
-          child: ElevatedButton(
-            child: Text("Close Bottom Sheet"),
-            style: ElevatedButton.styleFrom(
-              onPrimary: Colors.white,
-              primary: Colors.green,
-            ),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        );
-      },
-    );
-  }
-
   void postModal(context) {
     showModalBottomSheet(
         shape: const RoundedRectangleBorder(
             borderRadius: BorderRadius.vertical(top: Radius.circular(25.0))),
-        backgroundColor: Colors.white,
+        backgroundColor:
+            initController.isLightTheme.value ? Colors.white : Colors.black87,
         context: context,
         isScrollControlled: true,
-        builder: (context) => Padding(
+        builder: (context) {
+          return StatefulBuilder(builder: (BuildContext context,
+              StateSetter setState /*You can rename this!*/) {
+            return Padding(
               padding: const EdgeInsets.symmetric(horizontal: 18),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
+                  SizedBox(height: 10),
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      CircleAvatar(
-                          backgroundImage: NetworkImage(
-                              "https://qstar.mindethiopia.com/api/getProfilePicture/1")),
-                      const SizedBox(width: 8.0),
-                      Padding(
-                        padding: const EdgeInsets.only(left: 20.0),
-                        child: Container(
-                          height: 25,
-                          decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(25),
-                              border: Border.all(
-                                  color: Colors.grey.withOpacity(0.9))),
-                          child: FlatButton(
-                            onPressed: () {},
-                            child: Row(
-                              // Replace with a Row for horizontal icon + text
-                              children: <Widget>[
-                                Icon(
-                                  "public" == "public"
-                                      ? Icons.public
-                                      : "friends" == "friends"
-                                          ? Icons
-                                              .supervised_user_circle_outlined
-                                          : Icons.star,
-                                  color: primaryColor,
-                                  size: 20,
-                                ),
-                                Text("public")
-                              ],
-                            ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Image.asset(
+                            initController.isLightTheme.value
+                                ? "assets/images/pro1.png"
+                                : "assets/images/pro2.png",
+                            height: 30,
+                            width: 30,
+                            fit: BoxFit.cover,
                           ),
-                        ),
-                      ),
-                      const Spacer(),
-                      Container(
-                        padding: const EdgeInsets.only(
-                          left: 40,
-                        ),
-                        child: Expanded(
-                          child: Container(
-                            height: 40,
-                            width:
-                                // ignore: unrelated_type_equality_checks
-                                true == false ? 64 : 90,
-                            margin: const EdgeInsets.symmetric(vertical: 10),
-                            decoration: BoxDecoration(
-                                color: primaryColor,
-                                borderRadius: BorderRadius.circular(5),
-                                border: Border.all(color: primaryColor)),
-                            child: FlatButton(
-                              onPressed: () {
-                                // postController.createPost();
-                              },
-                              // ignore: unrelated_type_equality_checks
-                              child: false == false
-                                  ? Center(
-                                      // ignore: unrelated_type_equality_checks
-                                      child: false == false
-                                          ? const Text(
-                                              'Post',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            )
-                                          : const Text(
-                                              'Posted',
-                                              style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.white,
-                                              ),
-                                            ))
-                                  : const SizedBox(
-                                      height: 20,
-                                      width: 20,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                            // ignore: unrelated_type_equality_checks
-                                            color: Colors.white),
-                                      ),
-                                    ),
-                            ),
+                          Text(
+                            "Beginner",
+                            style: Theme.of(context).textTheme.headline6,
                           ),
-                        ),
+                        ],
                       ),
+                      Avatar(
+                          image:
+                              "https://dontgetserious.com/wp-content/uploads/2021/07/Awkward-Meme-768x646.jpeg"),
                     ],
                   ),
                   const SizedBox(
@@ -381,10 +333,10 @@ class _HomePageState extends State<HomePage>
 
                                       decoration:
                                           const InputDecoration.collapsed(
-                                              hintText: 'What\'s on your mind?',
+                                              hintText: 'tell us your joke',
                                               hintStyle: TextStyle(
-                                                fontSize: 15,
-                                              )),
+                                                  fontSize: 15,
+                                                  fontFamily: "Montserrat")),
 
                                       validator: (value) {},
                                     ),
@@ -396,73 +348,151 @@ class _HomePageState extends State<HomePage>
                               ),
                             ),
                           ),
-                          const Divider(
-                            thickness: 1,
-                          ),
+                          // const Divider(
+                          //   thickness: 1,
+                          // ),
                           SizedBox(
                             height: 200,
                             child: ListView(
                               scrollDirection: Axis.vertical,
                               children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    FlatButton.icon(
-                                      onPressed: () {
-                                        // _showVideoPicker(context);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.video,
-                                        color: Colors.red,
+                                    Container(
+                                      width: 120,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                          color: Colors.grey[300],
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          boxShadow: [
+                                            BoxShadow(
+                                                color: Colors.white
+                                                    .withOpacity(.4),
+                                                blurRadius: 5,
+                                                offset: Offset(0, 5))
+                                          ]),
+                                      child: Column(
+                                        children: [
+                                          InkWell(
+                                            onTap: () {
+                                              signUpcontroller
+                                                  .selectImagesFile();
+                                            },
+                                            child: Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 7.0),
+                                              child: Center(
+                                                  child: Icon(
+                                                Icons.camera,
+                                                color: Colors.grey[500],
+                                              )),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: 5,
+                                          ),
+                                          Expanded(
+                                            child: Text("Add Photo",
+                                                style: GoogleFonts.poppins(
+                                                    color: Colors.grey[500],
+                                                    fontSize: 10.0,
+                                                    fontWeight:
+                                                        FontWeight.bold)),
+                                          ),
+                                        ],
                                       ),
-                                      label: const Text('Add your Video'),
                                     ),
-                                    FlatButton.icon(
-                                      // ignore: avoid_print
-                                      onPressed: () {
-                                        // _showPicker(context);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.photoFilm,
-                                        color: Colors.green,
+                                    Padding(
+                                      padding: EdgeInsets.only(left: 25),
+                                      child: Container(
+                                        width: 120,
+                                        height: 60,
+                                        decoration: BoxDecoration(
+                                            color: Colors.grey[300],
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                  color: Colors.white
+                                                      .withOpacity(.4),
+                                                  blurRadius: 5,
+                                                  offset: Offset(0, 5))
+                                            ]),
+                                        child: Column(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 7.0),
+                                              child: Center(
+                                                  child: Icon(
+                                                FontAwesomeIcons.video,
+                                                color: Colors.grey[500],
+                                              )),
+                                            ),
+                                            SizedBox(
+                                              height: 5,
+                                            ),
+                                            Expanded(
+                                              child: Text("Add Video",
+                                                  style: GoogleFonts.poppins(
+                                                      color: Colors.grey[500],
+                                                      fontSize: 10.0,
+                                                      fontWeight:
+                                                          FontWeight.bold)),
+                                            ),
+                                          ],
+                                        ),
                                       ),
-                                      label: const Text('Add Photo'),
-                                    ),
-                                    FlatButton.icon(
-                                      // ignore: avoid_print
-                                      onPressed: () {
-                                        // _showPeople(context);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.user,
-                                        color: primaryColor,
-                                      ),
-                                      label: const Text('Add People'),
-                                    ),
-                                    FlatButton.icon(
-                                      // ignore: avoid_print
-                                      onPressed: () {
-                                        // _showFeeling(context);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.faceSmile,
-                                        color: Colors.amber,
-                                      ),
-                                      label: const Text('Feeling Activity'),
-                                    ),
-                                    FlatButton.icon(
-                                      // ignore: avoid_print
-                                      onPressed: () {
-                                        // _showLocation(context);
-                                      },
-                                      icon: const Icon(
-                                        FontAwesomeIcons.locationArrow,
-                                        color: Colors.green,
-                                      ),
-                                      label: const Text('Add  Location'),
                                     ),
                                   ],
                                 ),
+                                SizedBox(
+                                  height: 30,
+                                ),
+                                InkWell(
+                                  onTap: () {
+                                    setState(() {
+                                      tapped = !tapped;
+                                    });
+                                  },
+                                  child: Container(
+                                      width: 40,
+                                      height: 60,
+                                      decoration: BoxDecoration(
+                                          // border: Border.all(color: primaryColor),
+                                          color: primaryColor,
+                                          borderRadius:
+                                              BorderRadius.circular(40)),
+                                      child: !tapped
+                                          ? Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                  Text("Make A joke",
+                                                      style:
+                                                          GoogleFonts.poppins(
+                                                              color:
+                                                                  Colors.white,
+                                                              fontSize: 20.0,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold)),
+                                                  SizedBox(
+                                                    width: 15,
+                                                  ),
+                                                  Image.asset(
+                                                    "assets/images/jokes2.jpg",
+                                                    height: 25,
+                                                    width: 25,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ])
+                                          : Center(
+                                              child: ColorLoader5(),
+                                            )),
+                                )
                               ],
                             ),
                           ),
@@ -472,6 +502,8 @@ class _HomePageState extends State<HomePage>
                   ),
                 ],
               ),
-            ));
+            );
+          });
+        });
   }
 }
